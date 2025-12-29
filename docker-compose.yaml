@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  front:
+    build: ./app
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test:
+        ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health >/dev/null || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  server-client:
+    build:
+      context: ./server-client
+      dockerfile: docker/dev/Dockerfile
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test:
+        ["CMD-SHELL", "wget -qO- http://localhost:8080/health >/dev/null || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  ws:
+    build:
+      context: ./ws
+      dockerfile: docker/dev/Dockerfile
+    ports:
+      - "8081:8081"
+    healthcheck:
+      test:
+        ["CMD-SHELL", "wget -qO- http://localhost:8081/health >/dev/null || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  test:
+    profiles: ["test"]
+    image: golang:1.25
+    volumes:
+      - .:/repo
+    depends_on:
+      - front
+      - server-client
+      - ws
+    environment:
+      FRONT_URL: http://front:3000
+      API_URL: http://server-client:8080
+      WS_URL: ws://ws:8081/ws
+
+    command: >
+      sh -c "
+        cd /repo/server-client && go test ./... &&
+        cd /repo/ws && go test ./... 
+      "

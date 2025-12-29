@@ -1,0 +1,33 @@
+# バイナリ
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go モジュールキャッシュ
+vendor/
+Gopkg.lock
+Gopkg.toml
+
+# Go build 出力
+bin/
+_build/
+
+# IDE / エディタ関連
+.idea/
+.vscode/
+*.swp
+*~
+
+# OS 系
+.DS_Store
+Thumbs.db
+
+# coverage
+coverage.out
+
+# GoLand の設定ファイル
+*.iml
