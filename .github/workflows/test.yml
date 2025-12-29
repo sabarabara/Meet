@@ -7,6 +7,16 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    environment: dbenv
+    env:
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_HOST: ${{ secrets.DB_HOST }}
     steps:
       - uses: actions/checkout@v4
-      - run: docker compose --profile test up --build --exit-code-from test
+      - run: docker compose up -d db server-client ws
+      - run: docker compose run --rm migrate
+      - run: docker compose run --rm test
+      - if: always()
+        run: docker compose down -v
