@@ -2,12 +2,14 @@ package main
 
 import (
 	"log"
+	"server-client/pkg/db"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 
+	db.InitDB()
 	r := gin.Default()
 
 	r.GET("/health", func(c *gin.Context) {
