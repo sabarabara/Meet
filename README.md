@@ -25,6 +25,22 @@ export DB_HOST=db
 docker compose up --build
 ```
 
+### テスト実行コマンド
+**単体テスト**
+
+プロジェクトルートで
+```
+go test ./...
+```
+**docker-compose上でテスト**
+```
+set -e; \
+      docker compose up -d db server-client ws; \
+      docker compose run --rm migrate; \
+      docker compose run --rm test; \
+      docker compose down -v
+```
+
 ### ファイル構成(仮)
 ```
 .
