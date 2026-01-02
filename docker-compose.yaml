@@ -60,11 +60,39 @@ services:
       API_URL: http://server-client:8080
       WS_URL: ws://ws:8081/ws
 
+      DB_HOST: ${DB_HOST}
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
     command: >
       sh -c "
         cd /repo/server-client && go test ./... &&
-        cd /repo/ws && go test ./... 
+        cd /repo/ws && go test ./... -p 1
       "
+
+  seed:
+    profiles: ["test"]
+    image: postgres:15
+    depends_on:
+      - db
+      - migrate
+    volumes:
+      - ./database/seed:/seed
+    environment:
+      PGPHOST: ${DB_HOST}
+      PGPORT: 5432
+      PGUSER: ${DB_USER}
+      PGDATABASE: ${DB_NAME}
+      PGPASSWORD: ${DB_PASSWORD}
+    entrypoint:
+      - sh
+      - -c
+      - |
+        psql -h db -U ${DB_USER} -d ${DB_NAME} -f /seed/01_users_seed.sql &&
+        psql -h db -U ${DB_USER} -d ${DB_NAME} -f /seed/02_recruit_seed.sql &&
+        psql -h db -U ${DB_USER} -d ${DB_NAME} -f /seed/03_rooms_seed.sql &&
+        psql -h db -U ${DB_USER} -d ${DB_NAME} -f /seed/04_recruit_location_seed.sql
   db:
     image: postgres:16-alpine
     healthcheck:

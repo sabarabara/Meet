@@ -34,11 +34,7 @@ go test ./...
 ```
 **docker-compose上でテスト**
 ```
-set -e; \
-      docker compose up -d db server-client ws; \
-      docker compose run --rm migrate; \
-      docker compose run --rm test; \
-      docker compose down -v
+bash ./run-tests.sh
 ```
 
 ### ファイル構成(仮)

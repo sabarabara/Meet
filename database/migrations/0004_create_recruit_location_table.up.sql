@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS RECRUIT_LOCATION (
-    locationid UUID PRIMARY KEY,
+    locationid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     recruitid UUID NOT NULL REFERENCES RECRUIT(recruitid) ON DELETE CASCADE,
     latitude DOUBLE PRECISION,
     longitude DOUBLE PRECISION

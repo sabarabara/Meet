@@ -15,8 +15,4 @@ jobs:
       DB_HOST: ${{ secrets.DB_HOST }}
     steps:
       - uses: actions/checkout@v4
-      - run: docker compose up -d db server-client ws
-      - run: docker compose run --rm migrate
-      - run: docker compose run --rm test
-      - if: always()
-        run: docker compose down -v
+      - run: bash $GITHUB_WORKSPACE/run-tests.sh
