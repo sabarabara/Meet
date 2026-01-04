@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS RECRUIT (
-    recruitid UUID PRIMARY KEY,
+    recruitid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     userid UUID NOT NULL REFERENCES USERS(userid) ON DELETE CASCADE,
     area VARCHAR(255),
     imgurl VARCHAR(255),
@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS RECRUIT (
     vacant_man INT,
     vacant_woman INT,
     comment TEXT,
-    date DATE
+    date TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );

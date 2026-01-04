@@ -1,7 +1,7 @@
 package recruitlocation_test
 
 import (
-	recruitlocation "server-client/internal/domain/recruit/recruit_location"
+	recruitlocation "server-client/internal/domain/vo_and_entity/recruit/recruit_location"
 	"testing"
 
 	"github.com/google/uuid"
