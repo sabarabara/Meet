@@ -5,6 +5,7 @@ import (
 )
 
 type ReviewDTO struct {
+	reviewid       *uuid.UUID
 	roomid         uuid.UUID
 	writer         uuid.UUID
 	evaluated_user uuid.UUID
@@ -12,6 +13,7 @@ type ReviewDTO struct {
 }
 
 func NewReviewDTO(
+	reviewid *uuid.UUID,
 	roomid uuid.UUID,
 	writer uuid.UUID,
 	evaluated_user uuid.UUID,
@@ -24,7 +26,9 @@ func NewReviewDTO(
 		comment:        comment,
 	}
 }
-
+func (r ReviewDTO) Reviewid() *uuid.UUID {
+	return r.reviewid
+}
 func (r ReviewDTO) Roomid() uuid.UUID {
 	return r.roomid
 }

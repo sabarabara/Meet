@@ -3,19 +3,24 @@ package dto
 import "github.com/google/uuid"
 
 type RecruitLocationDTO struct {
-	recruitid uuid.UUID
-	latitude  float64
-	longitude float64
+	recruitlocationid *uuid.UUID
+	recruitid         uuid.UUID
+	latitude          float64
+	longitude         float64
 }
 
-func NewRecruitLocationDTO(recruitid uuid.UUID, latitude float64, longitude float64) RecruitLocationDTO {
+func NewRecruitLocationDTO(recruitlocationid *uuid.UUID, recruitid uuid.UUID, latitude float64, longitude float64) RecruitLocationDTO {
 	return RecruitLocationDTO{
-		recruitid: recruitid,
-		latitude:  latitude,
-		longitude: longitude,
+		recruitlocationid: recruitlocationid,
+		recruitid:         recruitid,
+		latitude:          latitude,
+		longitude:         longitude,
 	}
 }
 
+func (r RecruitLocationDTO) Recruitlocationid() *uuid.UUID {
+	return r.recruitlocationid
+}
 func (r RecruitLocationDTO) Recruitid() uuid.UUID {
 	return r.recruitid
 }

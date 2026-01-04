@@ -57,6 +57,7 @@ func TestInsertReview_Postgres(t *testing.T) {
 	comment := "とても良い部屋でした"
 
 	dto := dto.NewReviewDTO(
+		nil,
 		roomID,
 		writerID,
 		evaluatedUserID,

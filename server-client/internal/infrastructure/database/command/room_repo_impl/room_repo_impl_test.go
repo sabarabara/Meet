@@ -55,6 +55,7 @@ func TestInsertRoom_Postgres(t *testing.T) {
 	userID := uuid.MustParse("fcf49967-0058-4051-a704-22bd99078606")
 
 	dto := dto.NewRoomDTO(
+		nil,
 		recruitID,
 		userID,
 		"owner",
@@ -98,6 +99,7 @@ func TestDeleteRoom_Postgres(t *testing.T) {
 
 	// 先に insert
 	dto := dto.NewRoomDTO(
+		nil,
 		recruitID,
 		userID,
 		"member",

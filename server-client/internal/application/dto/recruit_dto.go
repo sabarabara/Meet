@@ -7,6 +7,7 @@ import (
 )
 
 type RecruitDTO struct {
+	recruitid    *uuid.UUID
 	userid       uuid.UUID
 	area         string
 	imgurl       string
@@ -19,6 +20,7 @@ type RecruitDTO struct {
 }
 
 func NewRecruitDTO(
+	recruitid *uuid.UUID,
 	userid uuid.UUID,
 	area string,
 	imgurl string,
@@ -42,6 +44,9 @@ func NewRecruitDTO(
 	}
 }
 
+func (r RecruitDTO) Recruitid() *uuid.UUID {
+	return r.recruitid
+}
 func (r RecruitDTO) Userid() uuid.UUID {
 	return r.userid
 }
