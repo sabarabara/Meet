@@ -56,6 +56,7 @@ func TestInsertRecruitLocation_Postgres(t *testing.T) {
 	longitude := 139.767125
 
 	dto := dto.NewRecruitLocationDTO(
+		nil,
 		recruitID,
 		latitude,
 		longitude,

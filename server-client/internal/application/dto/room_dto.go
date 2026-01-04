@@ -3,6 +3,7 @@ package dto
 import "github.com/google/uuid"
 
 type RoomDTO struct {
+	roomid     *uuid.UUID
 	recruitid  uuid.UUID
 	userid     uuid.UUID
 	role       string
@@ -10,12 +11,14 @@ type RoomDTO struct {
 }
 
 func NewRoomDTO(
+	roomid *uuid.UUID,
 	recruitid uuid.UUID,
 	userid uuid.UUID,
 	role string,
 	isfinished bool,
 ) RoomDTO {
 	return RoomDTO{
+		roomid:     roomid,
 		recruitid:  recruitid,
 		userid:     userid,
 		role:       role,
@@ -23,6 +26,9 @@ func NewRoomDTO(
 	}
 }
 
+func (r RoomDTO) Roomid() *uuid.UUID {
+	return r.roomid
+}
 func (r RoomDTO) Recruitid() uuid.UUID {
 	return r.recruitid
 }

@@ -56,6 +56,7 @@ func TestInsertRecruit_Postgres(t *testing.T) {
 	now := time.Now().UTC().Truncate(time.Microsecond)
 
 	dto := dto.NewRecruitDTO(
+		nil,
 		userID,
 		"Tokyo",
 		"https://example.com/image.png",
