@@ -50,61 +50,13 @@ bash ./run-tests.sh
 ├── go.sum
 ├── internal
 │   ├── application
-│   │   ├── factory
-│   │   └── usecase
-│   │       ├── command
-│   │       │   ├── recruit
-│   │       │   │   ├── recruit_service.go
-│   │       │   │   └── recruit_usecase.go
-│   │       │   ├── room
-│   │       │   │   ├── room_service.go
-│   │       │   │   └── room_usecase.go
-│   │       │   └── user
-│   │       │       ├── user_service.go
-│   │       │       └── user_usecase.go
-│   │       └── query
-│   │           ├── message
-│   │           │   └── message_usecase.go
-│   │           ├── recruit
-│   │           │   └── recruit_usecase.go
-│   │           ├── room
-│   │           │   └── room_usecase.go
-│   │           └── user
-│   │               └── user_usecase.go
-│   ├── di
-│   │   └── wire.go
-│   ├── domain
-│   │   ├── message.go
-│   │   ├── recruit.go
-│   │   ├── recruit_location.go
-│   │   ├── review.go
-│   │   ├── room.go
-│   │   └── user.go
-│   ├── infrastructure
-│   │   ├── database
-│   │   │   ├── command
-│   │   │   │   ├── impl
-│   │   │   │   │   ├── recruit_read_repo_impl.go
-│   │   │   │   │   ├── recruit_repo_impl.go
-│   │   │   │   │   ├── review_repo_impl.go
-│   │   │   │   │   └── user_repo_impl.go
-│   │   │   │   └── repo
-│   │   │   │       ├── recruit_read_repo.go
-│   │   │   │       ├── recruit_repo.go
-│   │   │   │       ├── review_repo.go
-│   │   │   │       └── user_repo.go
-│   │   │   └── query
-│   │   │       ├── impl
-│   │   │       │   ├── message_repo_impl.go
-│   │   │       │   ├── recruit_repo_impl.go
-│   │   │       │   ├── room_repo_impl.go
-│   │   │       │   └── user_repo_impl.go
-│   │   │       └── repo
-│   │   │           ├── message_repo.go
-│   │   │           ├── recruit_repo.go
-│   │   │           ├── room_repo.go
-│   │   │           └── user_repo.go
-│   │   └── score_prediction
+│   │   └── dto
+│   │       ├── message_dto.go
+│   │       ├── recruit_dto.go
+│   │       ├── recruit_location_dto.go
+│   │       ├── review_dto.go
+│   │       ├── room_dto.go
+│   │       └── user_dto.go
 │   ├── presenter
 │   │   ├── dto
 │   │   │   ├── common
@@ -129,16 +81,79 @@ bash ./run-tests.sh
 │   │               ├── recruitResolver.go
 │   │               ├── roomResolver.go
 │   │               └── userResolver.go
-├── pkg
-│   ├── auth
-│   │   ├── login_handler.go
-│   │   ├── logout_handler.go
-│   │   ├── oidc.go
-│   │   └── session.go
-│   ├── db
-│   │   ├── dbconfig.go
-│   │   └── redisconfig.go
-│   └── middleware
-│       └── middleware.go
+│   ├── domain
+│   │   ├── repository
+│   │   │   ├── command
+│   │   │   │   ├── recruit_location_repo.go
+│   │   │   │   ├── recruit_repo.go
+│   │   │   │   ├── review_repo.go
+│   │   │   │   ├── room_repo.go
+│   │   │   │   └── user_repo.go
+│   │   │   └── query
+│   │   │       ├── message_repo.go
+│   │   │       ├── recruit_repo.go
+│   │   │       ├── room_repo.go
+│   │   │       └── user_repo.go
+│   │   └── vo_and_entity
+│   │       ├── message
+│   │       │   ├── message.go
+│   │       │   └── message_test.go
+│   │       ├── recruit
+│   │       │   ├── recruit.go
+│   │       │   ├── recruit_test.go
+│   │       │   └── recruit_location
+│   │       │       ├── recruit_location.go
+│   │       │       └── recruit_location_test.go
+│   │       ├── review
+│   │       │   ├── review.go
+│   │       │   └── review_test.go
+│   │       ├── room
+│   │       │   ├── room.go
+│   │       │   └── room_test.go
+│   │       └── user
+│   │           ├── user.go
+│   │           └── user_test.go
+│   └── infrastructure
+│       └── database
+│           ├── command
+│           │   ├── recruit_location_repo_impl
+│           │   │   ├── recruit_location_repo_impl.go
+│           │   │   └── recruit_location_repo_impl_test.go
+│           │   ├── recruit_repo_impl
+│           │   │   ├── recruit_repo_impl.go
+│           │   │   └── recruit_repo_impl_test.go
+│           │   ├── review_repo_impl
+│           │   │   ├── review_repo_impl.go
+│           │   │   └── review_repo_impl_test.go
+│           │   ├── room_repo_impl
+│           │   │   ├── room_repo_impl.go
+│           │   │   └── room_repo_impl_test.go
+│           │   └── user_repo_impl
+│           │       ├── user_repo_impl.go
+│           │       └── user_repo_impl_test.go
+│           └── query
+│               ├── message_repo_impl
+│               │   ├── message_repo_impl.go
+│               │   └── message_repo_impl_test.go
+│               ├── recruit_repo_impl
+│               │   ├── recruit_repo_impl.go
+│               │   └── recruit_repo_impl_test.go
+│               ├── room_repo_impl
+│               │   ├── room_repo_impl.go
+│               │   └── room_repo_impl_test.go
+│               └── user_repo_impl
+│                   ├── user_repo_impl.go
+│                   └── user_repo_impl_test.go
+└── pkg
+    ├── auth
+    │   ├── login_handler.go
+    │   ├── logout_handler.go
+    │   ├── oidc.go
+    │   └── session.go
+    ├── db
+    │   ├── dbconfig.go
+    │   └── redisconfig.go
+    └── middleware
+        └── middleware.go
 
 ```
