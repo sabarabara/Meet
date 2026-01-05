@@ -1,0 +1,11 @@
+type Message {
+    id: ID!
+    roomId: ID!
+    senderId: ID!
+    content: String!
+    isread: Boolean!
+}
+
+extend type Query {
+    messagesByRoom(roomId: ID!): [Message!]!
+}

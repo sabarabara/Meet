@@ -1,0 +1,17 @@
+type Room {
+    roomId: ID!
+    recruitId: ID!
+    userId: ID!
+    role : String!
+    isfinished: Boolean!
+}
+
+extend type Query {
+    getRoomsByUser(userId: ID!, limit: Int!, offset: Int!): [Room!]!
+}
+
+extend type Mutation {
+    deleteRoomUser(
+        roomId: ID!
+    ): Room!
+}

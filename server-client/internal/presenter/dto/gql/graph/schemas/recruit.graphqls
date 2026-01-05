@@ -1,0 +1,32 @@
+scalar DateTime
+
+type Recruit {
+    recruitId: ID!
+    userId: ID!
+    area: String!
+    imgUrl: String!
+    man :Int!
+    woman: Int!
+    vacant_man: Int!
+    vacant_woman: Int!
+    comment: String!
+    date: DateTime!
+}
+
+extend type Query {
+    getRecruits(limit: Int!, offset: Int!): [Recruit!]!
+}
+
+extend type Mutation {
+    createRecruit(
+        userId: ID!
+        area: String!
+        imgUrl: String!
+        man: Int!
+        woman: Int!
+        vacant_man: Int!
+        vacant_woman: Int!
+        comment: String!
+        date: DateTime!
+    ): Recruit!
+}
