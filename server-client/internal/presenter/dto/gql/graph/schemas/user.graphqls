@@ -1,0 +1,24 @@
+type User {
+    userId: ID!
+    username: String!
+    stars: Int!
+    imgUrl: String!
+    pronunciation: String!
+    selfIntroduce: String!
+}
+
+extend type Query {
+    getUserById(userId: ID!): User!
+}
+
+extend type Mutation {
+    updateUser(
+        userId: ID!
+        username: String!
+        stars: Int!
+        imgUrl: String!
+        pronunciation: String!
+        selfIntroduce: String!
+    ): User!
+    deleteUser(userId: ID!): User!
+}
