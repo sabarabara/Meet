@@ -18,7 +18,7 @@ import (
 // region    ************************** generated!.gotpl **************************
 
 type MutationResolver interface {
-	CreateRecruit(ctx context.Context, userID string, area string, imgURL string, man int32, woman int32, vacantMan int32, vacantWoman int32, comment string, date string) (*model.Recruit, error)
+	CreateRecruit(ctx context.Context, userID string, area string, imgURL string, man int32, woman int32, vacantMan int32, vacantWoman int32, comment string, date string, latitude float64, longitude float64) (*model.Recruit, error)
 	DeleteRoomUser(ctx context.Context, roomID string) (*model.Room, error)
 	UpdateUser(ctx context.Context, userID string, username string, stars int32, imgURL string, pronunciation string, selfIntroduce string) (*model.User, error)
 	DeleteUser(ctx context.Context, userID string) (*model.User, error)
@@ -76,6 +76,16 @@ func (ec *executionContext) field_Mutation_createRecruit_args(ctx context.Contex
 		return nil, err
 	}
 	args["date"] = arg8
+	arg9, err := graphql.ProcessArgField(ctx, rawArgs, "latitude", ec.unmarshalNFloat2float64)
+	if err != nil {
+		return nil, err
+	}
+	args["latitude"] = arg9
+	arg10, err := graphql.ProcessArgField(ctx, rawArgs, "longitude", ec.unmarshalNFloat2float64)
+	if err != nil {
+		return nil, err
+	}
+	args["longitude"] = arg10
 	return args, nil
 }
 
@@ -153,7 +163,7 @@ func (ec *executionContext) _Mutation_createRecruit(ctx context.Context, field g
 		ec.fieldContext_Mutation_createRecruit,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().CreateRecruit(ctx, fc.Args["userId"].(string), fc.Args["area"].(string), fc.Args["imgUrl"].(string), fc.Args["man"].(int32), fc.Args["woman"].(int32), fc.Args["vacant_man"].(int32), fc.Args["vacant_woman"].(int32), fc.Args["comment"].(string), fc.Args["date"].(string))
+			return ec.resolvers.Mutation().CreateRecruit(ctx, fc.Args["userId"].(string), fc.Args["area"].(string), fc.Args["imgUrl"].(string), fc.Args["man"].(int32), fc.Args["woman"].(int32), fc.Args["vacant_man"].(int32), fc.Args["vacant_woman"].(int32), fc.Args["comment"].(string), fc.Args["date"].(string), fc.Args["latitude"].(float64), fc.Args["longitude"].(float64))
 		},
 		nil,
 		ec.marshalNRecruit2ᚖserverᚑclientᚋinternalᚋpresenterᚋdtoᚋgqlᚋgraphᚋmodelᚐRecruit,
@@ -190,6 +200,10 @@ func (ec *executionContext) fieldContext_Mutation_createRecruit(ctx context.Cont
 				return ec.fieldContext_Recruit_comment(ctx, field)
 			case "date":
 				return ec.fieldContext_Recruit_date(ctx, field)
+			case "latitude":
+				return ec.fieldContext_Recruit_latitude(ctx, field)
+			case "longitude":
+				return ec.fieldContext_Recruit_longitude(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Recruit", field.Name)
 		},
@@ -661,6 +675,64 @@ func (ec *executionContext) fieldContext_Recruit_date(_ context.Context, field g
 	return fc, nil
 }
 
+func (ec *executionContext) _Recruit_latitude(ctx context.Context, field graphql.CollectedField, obj *model.Recruit) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Recruit_latitude,
+		func(ctx context.Context) (any, error) {
+			return obj.Latitude, nil
+		},
+		nil,
+		ec.marshalNFloat2float64,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Recruit_latitude(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Recruit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Recruit_longitude(ctx context.Context, field graphql.CollectedField, obj *model.Recruit) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Recruit_longitude,
+		func(ctx context.Context) (any, error) {
+			return obj.Longitude, nil
+		},
+		nil,
+		ec.marshalNFloat2float64,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Recruit_longitude(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Recruit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 // endregion **************************** field.gotpl *****************************
 
 // region    **************************** input.gotpl *****************************
@@ -801,6 +873,16 @@ func (ec *executionContext) _Recruit(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "date":
 			out.Values[i] = ec._Recruit_date(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "latitude":
+			out.Values[i] = ec._Recruit_latitude(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "longitude":
+			out.Values[i] = ec._Recruit_longitude(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

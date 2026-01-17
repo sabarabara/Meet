@@ -11,6 +11,8 @@ type Recruit {
     vacant_woman: Int!
     comment: String!
     date: DateTime!
+    latitude: Float!
+    longitude: Float!
 }
 
 extend type Query {
@@ -28,5 +30,7 @@ extend type Mutation {
         vacant_woman: Int!
         comment: String!
         date: DateTime!
+        latitude: Float!
+        longitude: Float!
     ): Recruit!
 }
