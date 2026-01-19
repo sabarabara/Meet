@@ -2,6 +2,8 @@
 
 <img width="749" height="410" alt="logo1" src="https://github.com/user-attachments/assets/6abc07d3-500c-48e1-ba0c-a2ae3e56fc41" />
 
+<img width="905" height="616" alt="スクリーンショット 2026-01-19 19 17 29" src="https://github.com/user-attachments/assets/e5e76ef0-eb58-4b3d-bd33-8dba77b96819" />
+
 ## 概要
 インスタにあげる写真が欲しい人がみんなで集まって写真を撮るアプリ
 
