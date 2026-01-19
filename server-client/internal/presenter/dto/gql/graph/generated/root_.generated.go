@@ -49,7 +49,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateRecruit  func(childComplexity int, userID string, area string, imgURL string, man int32, woman int32, vacantMan int32, vacantWoman int32, comment string, date string) int
+		CreateRecruit  func(childComplexity int, userID string, area string, imgURL string, man int32, woman int32, vacantMan int32, vacantWoman int32, comment string, date string, latitude float64, longitude float64) int
 		DeleteRoomUser func(childComplexity int, roomID string) int
 		DeleteUser     func(childComplexity int, userID string) int
 		UpdateUser     func(childComplexity int, userID string, username string, stars int32, imgURL string, pronunciation string, selfIntroduce string) int
@@ -67,6 +67,8 @@ type ComplexityRoot struct {
 		Comment     func(childComplexity int) int
 		Date        func(childComplexity int) int
 		ImgURL      func(childComplexity int) int
+		Latitude    func(childComplexity int) int
+		Longitude   func(childComplexity int) int
 		Man         func(childComplexity int) int
 		RecruitID   func(childComplexity int) int
 		UserID      func(childComplexity int) int
@@ -157,7 +159,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateRecruit(childComplexity, args["userId"].(string), args["area"].(string), args["imgUrl"].(string), args["man"].(int32), args["woman"].(int32), args["vacant_man"].(int32), args["vacant_woman"].(int32), args["comment"].(string), args["date"].(string)), true
+		return e.complexity.Mutation.CreateRecruit(childComplexity, args["userId"].(string), args["area"].(string), args["imgUrl"].(string), args["man"].(int32), args["woman"].(int32), args["vacant_man"].(int32), args["vacant_woman"].(int32), args["comment"].(string), args["date"].(string), args["latitude"].(float64), args["longitude"].(float64)), true
 
 	case "Mutation.deleteRoomUser":
 		if e.complexity.Mutation.DeleteRoomUser == nil {
@@ -270,6 +272,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Recruit.ImgURL(childComplexity), true
+
+	case "Recruit.latitude":
+		if e.complexity.Recruit.Latitude == nil {
+			break
+		}
+
+		return e.complexity.Recruit.Latitude(childComplexity), true
+
+	case "Recruit.longitude":
+		if e.complexity.Recruit.Longitude == nil {
+			break
+		}
+
+		return e.complexity.Recruit.Longitude(childComplexity), true
 
 	case "Recruit.man":
 		if e.complexity.Recruit.Man == nil {
@@ -518,6 +534,8 @@ type Recruit {
     vacant_woman: Int!
     comment: String!
     date: DateTime!
+    latitude: Float!
+    longitude: Float!
 }
 
 extend type Query {
@@ -535,6 +553,8 @@ extend type Mutation {
         vacant_woman: Int!
         comment: String!
         date: DateTime!
+        latitude: Float!
+        longitude: Float!
     ): Recruit!
 }`, BuiltIn: false},
 	{Name: "../schemas/room.graphqls", Input: `type Room {

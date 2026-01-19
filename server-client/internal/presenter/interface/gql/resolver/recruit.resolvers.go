@@ -13,7 +13,7 @@ import (
 )
 
 // CreateRecruit is the resolver for the createRecruit field.
-func (r *mutationResolver) CreateRecruit(ctx context.Context, userID string, area string, imgURL string, man int32, woman int32, vacantMan int32, vacantWoman int32, comment string, date string) (*model.Recruit, error) {
+func (r *mutationResolver) CreateRecruit(ctx context.Context, userID string, area string, imgURL string, man int32, woman int32, vacantMan int32, vacantWoman int32, comment string, date string, latitude float64, longitude float64) (*model.Recruit, error) {
 	panic(fmt.Errorf("not implemented: CreateRecruit - createRecruit"))
 }
 

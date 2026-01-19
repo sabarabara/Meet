@@ -349,6 +349,10 @@ func (ec *executionContext) fieldContext_Query_getRecruits(ctx context.Context, 
 				return ec.fieldContext_Recruit_comment(ctx, field)
 			case "date":
 				return ec.fieldContext_Recruit_date(ctx, field)
+			case "latitude":
+				return ec.fieldContext_Recruit_latitude(ctx, field)
+			case "longitude":
+				return ec.fieldContext_Recruit_longitude(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Recruit", field.Name)
 		},

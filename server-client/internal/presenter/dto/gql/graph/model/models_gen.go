@@ -17,16 +17,18 @@ type Query struct {
 }
 
 type Recruit struct {
-	RecruitID   string `json:"recruitId"`
-	UserID      string `json:"userId"`
-	Area        string `json:"area"`
-	ImgURL      string `json:"imgUrl"`
-	Man         int32  `json:"man"`
-	Woman       int32  `json:"woman"`
-	VacantMan   int32  `json:"vacant_man"`
-	VacantWoman int32  `json:"vacant_woman"`
-	Comment     string `json:"comment"`
-	Date        string `json:"date"`
+	RecruitID   string  `json:"recruitId"`
+	UserID      string  `json:"userId"`
+	Area        string  `json:"area"`
+	ImgURL      string  `json:"imgUrl"`
+	Man         int32   `json:"man"`
+	Woman       int32   `json:"woman"`
+	VacantMan   int32   `json:"vacant_man"`
+	VacantWoman int32   `json:"vacant_woman"`
+	Comment     string  `json:"comment"`
+	Date        string  `json:"date"`
+	Latitude    float64 `json:"latitude"`
+	Longitude   float64 `json:"longitude"`
 }
 
 type Room struct {
