@@ -1,5 +1,7 @@
 # Meet
 
+<img width="749" height="410" alt="logo1" src="https://github.com/user-attachments/assets/6abc07d3-500c-48e1-ba0c-a2ae3e56fc41" />
+
 ## 概要
 インスタにあげる写真が欲しい人がみんなで集まって写真を撮るアプリ
 
