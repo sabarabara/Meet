@@ -10,11 +10,34 @@ import (
 	"fmt"
 	graph "server-client/internal/presenter/dto/gql/graph/generated"
 	"server-client/internal/presenter/dto/gql/graph/model"
+
+	"github.com/google/uuid"
 )
 
 // MessagesByRoom is the resolver for the messagesByRoom field.
-func (r *queryResolver) MessagesByRoom(ctx context.Context, roomID string) ([]*model.Message, error) {
-	panic(fmt.Errorf("not implemented: MessagesByRoom - messagesByRoom"))
+func (r *queryResolver) MessagesByRoom(ctx context.Context, roomID string, limit int32, offset int32) ([]*model.Message, error) {
+	roomIDUUID, err := uuid.Parse(roomID)
+	if err != nil {
+		return nil, fmt.Errorf("invalid room ID: %w", err)
+	}
+
+	messages, err := r.MessageUsecase.GetMessagesByRoomID(ctx, roomIDUUID, int(limit), int(offset))
+	if err != nil {
+		return nil, fmt.Errorf("failed to get messages by room: %w", err)
+	}
+
+	var result []*model.Message
+	for _, msg := range messages {
+		result = append(result, &model.Message{
+			ID:       msg.MsgId().String(),
+			RoomID:   msg.RoomId().String(),
+			SenderID: msg.SenderId().String(),
+			Content:  msg.Content(),
+			Isread:   msg.IsRead(),
+		})
+	}
+
+	return result, nil
 }
 
 // Query returns graph.QueryResolver implementation.

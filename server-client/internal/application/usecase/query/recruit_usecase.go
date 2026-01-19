@@ -1,6 +1,7 @@
 package query
 
 import (
+	"context"
 	repo "server-client/internal/domain/repository/query"
 	pre_dto "server-client/internal/presenter/dto/common"
 )
@@ -16,7 +17,7 @@ func NewRecruitUsecase(recruitrepo RecruitRepository) *RecruitUsecase {
 	}
 }
 
-func (ru *RecruitUsecase) GetRecruit(page int, size int) ([]pre_dto.RecruitDTO, error) {
+func (ru *RecruitUsecase) GetRecruit(ctx context.Context, page int, size int) ([]pre_dto.RecruitDTO, error) {
 	recruit, recruit_location, err := ru.recruitrepo.GetRecruits(page, size)
 	if err != nil {
 		return nil, err
@@ -29,8 +30,8 @@ func (ru *RecruitUsecase) GetRecruit(page int, size int) ([]pre_dto.RecruitDTO, 
 	var recruitDTOs []pre_dto.RecruitDTO
 	for i := range len(recruit) {
 		recruitDTOs = append(recruitDTOs, *pre_dto.NewRecruitDTO(
-			recruit[i].Recruitid().String(),
-			recruit[i].Userid().String(),
+			*recruit[i].Recruitid(),
+			recruit[i].Userid(),
 			recruit[i].Area(),
 			recruit[i].Imgurl(),
 			recruit[i].Man(),

@@ -1,10 +1,14 @@
 package common
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type RecruitDTO struct {
-	recruitID   string
-	userID      string
+	recruitID   uuid.UUID
+	userID      uuid.UUID
 	area        string
 	imgURL      string
 	man         uint16
@@ -17,7 +21,7 @@ type RecruitDTO struct {
 	longitude   float64
 }
 
-func NewRecruitDTO(recruitID, userID, area, imgURL string, man, woman, vacantMan, vacantWoman uint16, comment string, date time.Time, latitude, longitude float64) *RecruitDTO {
+func NewRecruitDTO(recruitID, userID uuid.UUID, area, imgURL string, man, woman, vacantMan, vacantWoman uint16, comment string, date time.Time, latitude, longitude float64) *RecruitDTO {
 	return &RecruitDTO{
 		recruitID:   recruitID,
 		userID:      userID,
@@ -33,10 +37,10 @@ func NewRecruitDTO(recruitID, userID, area, imgURL string, man, woman, vacantMan
 		longitude:   longitude,
 	}
 }
-func (r *RecruitDTO) RecruitID() string {
+func (r *RecruitDTO) RecruitID() uuid.UUID {
 	return r.recruitID
 }
-func (r *RecruitDTO) UserID() string {
+func (r *RecruitDTO) UserID() uuid.UUID {
 	return r.userID
 }
 func (r *RecruitDTO) Area() string {

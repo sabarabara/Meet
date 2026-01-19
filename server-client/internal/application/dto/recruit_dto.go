@@ -32,6 +32,7 @@ func NewRecruitDTO(
 	date time.Time,
 ) RecruitDTO {
 	return RecruitDTO{
+		recruitid:    recruitid,
 		userid:       userid,
 		area:         area,
 		imgurl:       imgurl,

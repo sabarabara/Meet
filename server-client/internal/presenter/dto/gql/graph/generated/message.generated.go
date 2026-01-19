@@ -18,7 +18,7 @@ import (
 // region    ************************** generated!.gotpl **************************
 
 type QueryResolver interface {
-	MessagesByRoom(ctx context.Context, roomID string) ([]*model.Message, error)
+	MessagesByRoom(ctx context.Context, roomID string, limit int32, offset int32) ([]*model.Message, error)
 	GetRecruits(ctx context.Context, limit int32, offset int32) ([]*model.Recruit, error)
 	GetRoomsByUser(ctx context.Context, userID string, limit int32, offset int32) ([]*model.Room, error)
 	GetUserByID(ctx context.Context, userID string) (*model.User, error)
@@ -95,6 +95,16 @@ func (ec *executionContext) field_Query_messagesByRoom_args(ctx context.Context,
 		return nil, err
 	}
 	args["roomId"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalNInt2int32)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg1
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "offset", ec.unmarshalNInt2int32)
+	if err != nil {
+		return nil, err
+	}
+	args["offset"] = arg2
 	return args, nil
 }
 
@@ -259,7 +269,7 @@ func (ec *executionContext) _Query_messagesByRoom(ctx context.Context, field gra
 		ec.fieldContext_Query_messagesByRoom,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Query().MessagesByRoom(ctx, fc.Args["roomId"].(string))
+			return ec.resolvers.Query().MessagesByRoom(ctx, fc.Args["roomId"].(string), fc.Args["limit"].(int32), fc.Args["offset"].(int32))
 		},
 		nil,
 		ec.marshalNMessage2ᚕᚖserverᚑclientᚋinternalᚋpresenterᚋdtoᚋgqlᚋgraphᚋmodelᚐMessageᚄ,

@@ -59,7 +59,7 @@ type ComplexityRoot struct {
 		GetRecruits    func(childComplexity int, limit int32, offset int32) int
 		GetRoomsByUser func(childComplexity int, userID string, limit int32, offset int32) int
 		GetUserByID    func(childComplexity int, userID string) int
-		MessagesByRoom func(childComplexity int, roomID string) int
+		MessagesByRoom func(childComplexity int, roomID string, limit int32, offset int32) int
 	}
 
 	Recruit struct {
@@ -243,7 +243,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.MessagesByRoom(childComplexity, args["roomId"].(string)), true
+		return e.complexity.Query.MessagesByRoom(childComplexity, args["roomId"].(string), args["limit"].(int32), args["offset"].(int32)), true
 
 	case "Recruit.area":
 		if e.complexity.Recruit.Area == nil {
@@ -519,7 +519,7 @@ var sources = []*ast.Source{
 }
 
 extend type Query {
-    messagesByRoom(roomId: ID!): [Message!]!
+    messagesByRoom(roomId: ID!, limit: Int!, offset: Int!): [Message!]!
 }`, BuiltIn: false},
 	{Name: "../schemas/recruit.graphqls", Input: `scalar DateTime
 

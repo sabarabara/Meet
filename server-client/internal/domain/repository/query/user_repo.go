@@ -1,7 +1,11 @@
 package query
 
-import "server-client/internal/application/dto"
+import (
+	"server-client/internal/application/dto"
+
+	"github.com/google/uuid"
+)
 
 type UserRepo interface {
-	GetUsers(page int, size int) ([]dto.UserDTO, error)
+	GetUserByID(userID uuid.UUID) (dto.UserDTO, error)
 }

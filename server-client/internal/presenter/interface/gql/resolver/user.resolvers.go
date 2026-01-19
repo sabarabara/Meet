@@ -9,6 +9,8 @@ import (
 	"context"
 	"fmt"
 	"server-client/internal/presenter/dto/gql/graph/model"
+
+	"github.com/google/uuid"
 )
 
 // UpdateUser is the resolver for the updateUser field.
@@ -23,5 +25,17 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, userID string) (*mode
 
 // GetUserByID is the resolver for the getUserById field.
 func (r *queryResolver) GetUserByID(ctx context.Context, userID string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: GetUserByID - getUserById"))
+	user, err := r.UserUsecase.GetUsers(ctx, uuid.MustParse(userID))
+	if err != nil {
+		return nil, fmt.Errorf("failed to get users: %w", err)
+	}
+
+	return &model.User{
+		UserID:        user.UserID().String(),
+		Username:      user.Username(),
+		Stars:         int32(user.Stars()),
+		ImgURL:        user.ImgURL(),
+		Pronunciation: user.Pronunciation(),
+		SelfIntroduce: user.SelfIntroduce(),
+	}, nil
 }

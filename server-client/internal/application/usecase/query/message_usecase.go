@@ -1,6 +1,7 @@
 package query
 
 import (
+	"context"
 	repo "server-client/internal/domain/repository/query"
 	pre_dto "server-client/internal/presenter/dto/common"
 
@@ -18,7 +19,7 @@ func NewMessageUsecase(messageRepo MessageRepository) *MessageUsecase {
 	}
 }
 
-func (mu *MessageUsecase) GetMessagesByRoomID(roomID uuid.UUID, page int, size int) ([]pre_dto.MessageDTO, error) {
+func (mu *MessageUsecase) GetMessagesByRoomID(ctx context.Context, roomID uuid.UUID, page int, size int) ([]pre_dto.MessageDTO, error) {
 	msg, err := mu.messageRepo.GetMessages(roomID, page, size)
 	if err != nil {
 		return nil, err
@@ -27,9 +28,9 @@ func (mu *MessageUsecase) GetMessagesByRoomID(roomID uuid.UUID, page int, size i
 	var messageDTOs []pre_dto.MessageDTO
 	for _, m := range msg {
 		messageDTOs = append(messageDTOs, *pre_dto.NewMessageDTO(
-			m.Messageid().String(),
-			m.Roomid().String(),
-			m.Senderid().String(),
+			m.Messageid(),
+			m.Roomid(),
+			m.Senderid(),
 			m.Content(),
 			m.Isread(),
 		))

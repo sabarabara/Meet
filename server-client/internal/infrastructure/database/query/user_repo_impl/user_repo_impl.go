@@ -2,7 +2,7 @@ package userrepoimpl
 
 import (
 	"database/sql"
-	"log"
+	"fmt"
 	"server-client/internal/application/dto"
 	"server-client/internal/domain/repository/query"
 
@@ -30,37 +30,35 @@ func NewUserRepoImpl(db *sql.DB) *UserRepoImpl {
 	}
 }
 
-func (u *UserRepoImpl) GetUsers(page int, size int) ([]dto.UserDTO, error) {
-	offset := (page - 1) * size
-	rows, err := u.DB.Query("SELECT userid, username, imgurl, pronunciation, selfintroduce, stars FROM users LIMIT $1 OFFSET $2", size, offset)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if err := rows.Close(); err != nil {
-			log.Printf("rows.Close error: %v", err)
-			return
-		}
-	}()
+func (u *UserRepoImpl) GetUserByID(userID uuid.UUID) (dto.UserDTO, error) {
+	var entity userentity
+	err := u.DB.QueryRow(
+		"SELECT userid, username, imgurl, pronunciation, selfintroduce, stars FROM users WHERE userid = $1",
+		userID,
+	).Scan(
+		&entity.UserID,
+		&entity.UserName,
+		&entity.ImgURL,
+		&entity.Pronunciation,
+		&entity.SelfIntroduce,
+		&entity.Stars,
+	)
 
-	var users []dto.UserDTO
-	for rows.Next() {
-		var entity userentity
-		if err := rows.Scan(&entity.UserID, &entity.UserName, &entity.ImgURL, &entity.Pronunciation, &entity.SelfIntroduce, &entity.Stars); err != nil {
-			return nil, err
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return dto.UserDTO{}, fmt.Errorf("user not found: %w", err)
 		}
-		userDTO := dto.NewUserDTO(
-			&entity.UserID,
-			entity.UserName,
-			entity.ImgURL,
-			entity.Pronunciation,
-			entity.SelfIntroduce,
-			entity.Stars,
-		)
-		users = append(users, userDTO)
+		return dto.UserDTO{}, err
 	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return users, nil
+
+	userDTO := dto.NewUserDTO(
+		&entity.UserID,
+		entity.UserName,
+		entity.ImgURL,
+		entity.Pronunciation,
+		entity.SelfIntroduce,
+		entity.Stars,
+	)
+
+	return userDTO, nil
 }
