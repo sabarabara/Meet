@@ -49,6 +49,34 @@ bash ./run-tests.sh
 ├── go.mod
 ├── go.sum
 ├── internal
+│   ├── presenter
+│   │   ├── middleware
+│   │   │   └── auth_middleware.go
+│   │   ├── interface
+│   │   │   ├── gql
+│   │   │   │   └── resolver
+│   │   │   │       ├── messageResolver.go
+│   │   │   │       ├── recruitResolver.go
+│   │   │   │       ├── roomResolver.go
+│   │   │   │       └── userResolver.go
+│   │   │   └── rest
+│   │   │
+│   │   └── dto
+│   │       ├── common
+│   │       ├── gql
+│   │       │   ├── gqlgen.yml
+│   │       │   ├── graph
+│   │       │   │   ├── mutation
+│   │       │   │   │   ├── recruit_mutation.go
+│   │       │   │   │   ├── room_mutation.go
+│   │       │   │   │   └── user_mutation.go
+│   │       │   │   ├── query
+│   │       │   │   │   ├── message_query.go
+│   │       │   │   │   ├── recruit_query.go
+│   │       │   │   │   ├── room_query.go
+│   │       │   │   │   └── user_query.go
+│   │       │   │   └── schema.graphqls
+│   │       │   └── rest
 │   ├── application
 │   │   └── dto
 │   │       ├── message_dto.go
@@ -57,30 +85,6 @@ bash ./run-tests.sh
 │   │       ├── review_dto.go
 │   │       ├── room_dto.go
 │   │       └── user_dto.go
-│   ├── presenter
-│   │   ├── dto
-│   │   │   ├── common
-│   │   │   ├── gql
-│   │   │   │   ├── gqlgen.yml
-│   │   │   │   └── graph
-│   │   │   │       ├── mutation
-│   │   │   │       │   ├── recruit_mutation.go
-│   │   │   │       │   ├── room_mutation.go
-│   │   │   │       │   └── user_mutation.go
-│   │   │   │       ├── query
-│   │   │   │       │   ├── message_query.go
-│   │   │   │       │   ├── recruit_query.go
-│   │   │   │       │   ├── room_query.go
-│   │   │   │       │   └── user_query.go
-│   │   │   │       └── schema.graphqls
-│   │   │   └── rest
-│   │   └── interface
-│   │       └── gql
-│   │           └── resolver
-│   │               ├── messageResolver.go
-│   │               ├── recruitResolver.go
-│   │               ├── roomResolver.go
-│   │               └── userResolver.go
 │   ├── domain
 │   │   ├── repository
 │   │   │   ├── command
@@ -114,6 +118,11 @@ bash ./run-tests.sh
 │   │           ├── user.go
 │   │           └── user_test.go
 │   └── infrastructure
+│       ├── auth
+│       │   ├── oidc.go
+│       │   ├── login_handler.go
+│       │   ├── logout_handler.go
+│       │   └── session.go
 │       └── database
 │           ├── command
 │           │   ├── recruit_location_repo_impl
@@ -145,15 +154,7 @@ bash ./run-tests.sh
 │                   ├── user_repo_impl.go
 │                   └── user_repo_impl_test.go
 └── pkg
-    ├── auth
-    │   ├── login_handler.go
-    │   ├── logout_handler.go
-    │   ├── oidc.go
-    │   └── session.go
-    ├── db
-    │   ├── dbconfig.go
-    │   └── redisconfig.go
-    └── middleware
-        └── middleware.go
-
+    └── db
+        ├── dbconfig.go
+        └── redisconfig.go
 ```
