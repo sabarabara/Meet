@@ -1,14 +1,16 @@
 package common
 
+import "github.com/google/uuid"
+
 type MessageDTO struct {
-	msgid    string
-	roomid   string
-	senderid string
+	msgid    uuid.UUID
+	roomid   uuid.UUID
+	senderid uuid.UUID
 	content  string
 	isread   bool
 }
 
-func NewMessageDTO(id, roomID, senderID, content string, isRead bool) *MessageDTO {
+func NewMessageDTO(id, roomID, senderID uuid.UUID, content string, isRead bool) *MessageDTO {
 	return &MessageDTO{
 		msgid:    id,
 		roomid:   roomID,
@@ -18,15 +20,15 @@ func NewMessageDTO(id, roomID, senderID, content string, isRead bool) *MessageDT
 	}
 }
 
-func (m *MessageDTO) MsgId() string {
+func (m *MessageDTO) MsgId() uuid.UUID {
 	return m.msgid
 }
 
-func (m *MessageDTO) RoomId() string {
+func (m *MessageDTO) RoomId() uuid.UUID {
 	return m.roomid
 }
 
-func (m *MessageDTO) SenderId() string {
+func (m *MessageDTO) SenderId() uuid.UUID {
 	return m.senderid
 }
 

@@ -1,7 +1,9 @@
 package common
 
+import "github.com/google/uuid"
+
 type UserDTO struct {
-	userID        string
+	userID        uuid.UUID
 	username      string
 	stars         float32
 	imgURL        string
@@ -9,7 +11,7 @@ type UserDTO struct {
 	selfIntroduce string
 }
 
-func NewUserDTO(userID, username string, stars float32, imgURL, pronunciation, selfIntroduce string) *UserDTO {
+func NewUserDTO(userID uuid.UUID, username string, stars float32, imgURL, pronunciation, selfIntroduce string) *UserDTO {
 	return &UserDTO{
 		userID:        userID,
 		username:      username,
@@ -20,7 +22,7 @@ func NewUserDTO(userID, username string, stars float32, imgURL, pronunciation, s
 	}
 }
 
-func (u *UserDTO) UserID() string {
+func (u *UserDTO) UserID() uuid.UUID {
 	return u.userID
 }
 

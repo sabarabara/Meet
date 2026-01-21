@@ -19,7 +19,29 @@ func (r *mutationResolver) CreateRecruit(ctx context.Context, userID string, are
 
 // GetRecruits is the resolver for the getRecruits field.
 func (r *queryResolver) GetRecruits(ctx context.Context, limit int32, offset int32) ([]*model.Recruit, error) {
-	panic(fmt.Errorf("not implemented: GetRecruits - getRecruits"))
+	recruits, err := r.RecruitUsecase.GetRecruit(ctx, int(offset), int(limit))
+	if err != nil {
+		return nil, fmt.Errorf("failed to get recruits: %w", err)
+	}
+
+	var result []*model.Recruit
+	for _, rec := range recruits {
+		result = append(result, &model.Recruit{
+			RecruitID:   rec.RecruitID().String(),
+			UserID:      rec.UserID().String(),
+			Area:        rec.Area(),
+			ImgURL:      rec.ImgURL(),
+			Man:         int32(rec.Man()),
+			Woman:       int32(rec.Woman()),
+			VacantMan:   int32(rec.VacantMan()),
+			VacantWoman: int32(rec.VacantWoman()),
+			Comment:     rec.Comment(),
+			Date:        rec.Date().Format("2006-01-02"),
+			Latitude:    rec.Latitude(),
+			Longitude:   rec.Longitude(),
+		})
+	}
+	return result, nil
 }
 
 // Mutation returns graph.MutationResolver implementation.

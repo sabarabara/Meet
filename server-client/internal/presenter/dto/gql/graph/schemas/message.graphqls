@@ -7,5 +7,5 @@ type Message {
 }
 
 extend type Query {
-    messagesByRoom(roomId: ID!): [Message!]!
+    messagesByRoom(roomId: ID!, limit: Int!, offset: Int!): [Message!]!
 }

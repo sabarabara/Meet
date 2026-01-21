@@ -9,6 +9,8 @@ import (
 	"context"
 	"fmt"
 	"server-client/internal/presenter/dto/gql/graph/model"
+
+	"github.com/google/uuid"
 )
 
 // DeleteRoomUser is the resolver for the deleteRoomUser field.
@@ -18,5 +20,26 @@ func (r *mutationResolver) DeleteRoomUser(ctx context.Context, roomID string) (*
 
 // GetRoomsByUser is the resolver for the getRoomsByUser field.
 func (r *queryResolver) GetRoomsByUser(ctx context.Context, userID string, limit int32, offset int32) ([]*model.Room, error) {
-	panic(fmt.Errorf("not implemented: GetRoomsByUser - getRoomsByUser"))
+	userUUID, err := uuid.Parse(userID)
+	if err != nil {
+		return nil, fmt.Errorf("invalid user ID: %w", err)
+	}
+
+	rooms, err := r.RoomUsecase.GetRoomsByUserID(ctx, userUUID, int(offset), int(limit))
+	if err != nil {
+		return nil, fmt.Errorf("failed to get rooms by user: %w", err)
+	}
+
+	var result []*model.Room
+	for _, room := range rooms {
+		result = append(result, &model.Room{
+			RoomID:     room.RoomID().String(),
+			RecruitID:  room.RecruitID().String(),
+			UserID:     room.UserID().String(),
+			Role:       room.Role(),
+			Isfinished: room.IsFinished(),
+		})
+	}
+
+	return result, nil
 }

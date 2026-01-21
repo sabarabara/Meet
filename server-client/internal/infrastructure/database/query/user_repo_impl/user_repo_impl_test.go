@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"server-client/internal/application/dto"
 	"testing"
 
+	"github.com/google/uuid"
 	_ "github.com/lib/pq"
 )
 
@@ -40,6 +42,7 @@ func setupSQLDB(t *testing.T) *sql.DB {
 }
 
 func TestGetUsers_Postgres(t *testing.T) {
+	userid := uuid.MustParse("fcf49967-0058-4051-a704-22bd99078606")
 	db := setupSQLDB(t)
 	defer func() {
 		if err := db.Close(); err != nil {
@@ -48,11 +51,11 @@ func TestGetUsers_Postgres(t *testing.T) {
 	}()
 
 	repo := NewUserRepoImpl(db)
-	users, err := repo.GetUsers(1, 1)
+	user, err := repo.GetUserByID(userid)
 	if err != nil {
 		t.Fatalf("GetUsers failed: %v", err)
 	}
-	if users == nil {
-		t.Fatalf("expected users slice, got nil")
+	if user == (dto.UserDTO{}) {
+		t.Fatalf("expected user, got nil")
 	}
 }

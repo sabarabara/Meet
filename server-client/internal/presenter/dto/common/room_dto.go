@@ -1,14 +1,16 @@
 package common
 
+import "github.com/google/uuid"
+
 type RoomDTO struct {
-	roomID     string
-	recruitID  string
-	userID     string
+	roomID     uuid.UUID
+	recruitID  uuid.UUID
+	userID     uuid.UUID
 	role       string
 	isFinished bool
 }
 
-func NewRoomDTO(roomID, recruitID, userID, role string, isFinished bool) *RoomDTO {
+func NewRoomDTO(roomID, recruitID, userID uuid.UUID, role string, isFinished bool) *RoomDTO {
 	return &RoomDTO{
 		roomID:     roomID,
 		recruitID:  recruitID,
@@ -18,15 +20,15 @@ func NewRoomDTO(roomID, recruitID, userID, role string, isFinished bool) *RoomDT
 	}
 }
 
-func (r *RoomDTO) RoomID() string {
+func (r *RoomDTO) RoomID() uuid.UUID {
 	return r.roomID
 }
 
-func (r *RoomDTO) RecruitID() string {
+func (r *RoomDTO) RecruitID() uuid.UUID {
 	return r.recruitID
 }
 
-func (r *RoomDTO) UserID() string {
+func (r *RoomDTO) UserID() uuid.UUID {
 	return r.userID
 }
 

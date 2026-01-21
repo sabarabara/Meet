@@ -64,8 +64,9 @@ func (r *RecruitRepoImpl) GetRecruits(page int, size int) ([]dto.RecruitDTO, []d
 		if err := rows.Scan(&entity.Recruitid, &entity.Userid, &entity.Area, &entity.Imgurl, &entity.Man, &entity.Woman, &entity.Vacant_man, &entity.Vacant_woman, &entity.Comment, &entity.Date, &entity.Latitude, &entity.Longitude); err != nil {
 			return nil, nil, err
 		}
+		id := entity.Recruitid
 		recruitDTO := dto.NewRecruitDTO(
-			&entity.Recruitid,
+			&id,
 			entity.Userid,
 			entity.Area,
 			entity.Imgurl,
