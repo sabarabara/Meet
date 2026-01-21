@@ -1,6 +1,25 @@
 version: "3.9"
 
 services:
+
+  traefik:
+    image: traefik:v3.0
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.network=meet-network"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.file.filename=/etc/traefik/traefik.yaml"
+    ports:
+      - "443:443"
+    networks:
+      - meet-network
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik/traefik.yaml:/etc/traefik/traefik.yaml:ro"
+      - "./traefik/cert.pem:/etc/traefik/certs/cert.pem:ro"
+      - "./traefik/key.pem:/etc/traefik/certs/key.pem:ro"
+  
   front:
     build: ./app
     ports:
@@ -25,8 +44,18 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
+    networks:
+      - meet-network
     ports:
       - "8080:8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.server-client.rule=Host(`localhost`) && PathPrefix(`/app`)"
+      - "traefik.http.routers.server-client.entrypoints=websecure"
+      - "traefik.http.routers.server-client.tls=true"
+      - "traefik.http.services.server-client.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.app-strip.stripprefix.prefixes=/app"
+      - "traefik.http.routers.server-client.middlewares=app-strip"
     healthcheck:
       test:
         ["CMD-SHELL", "wget -qO- http://localhost:8080/health >/dev/null || exit 1"]
@@ -65,6 +94,8 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
+    networks:
+      - meet-network
     command: >
       sh -c "
         cd /repo/server-client && go test ./... &&
@@ -85,6 +116,8 @@ services:
       PGUSER: ${DB_USER}
       PGDATABASE: ${DB_NAME}
       PGPASSWORD: ${DB_PASSWORD}
+    networks:
+      - meet-network
     entrypoint:
       - sh
       - -c
@@ -111,6 +144,8 @@ services:
       POSTGRES_PORT: 5432
     ports:
       - "5432:5432"
+    networks:
+      - meet-network
     volumes:
       - db_data:/var/lib/postgresql/data
 
@@ -128,6 +163,8 @@ services:
       DB_NAME: ${DB_NAME}
     volumes:
      - ./database/migrations:/migrations
+    networks:
+      - meet-network
     entrypoint:
       - migrate
       - -path
@@ -138,3 +175,7 @@ services:
 
 volumes:
   db_data:
+
+networks:
+  meet-network:
+    driver: bridge
