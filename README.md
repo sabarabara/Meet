@@ -43,6 +43,15 @@ export DB_NAME=mydb
 export DB_HOST=db
 ```
 
+### TLS設定
+以下のコマンドをtraefik内で実行する。
+```
+touch cert.pem
+touch key.pem
+
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 365 -nodes -subj '/CN=localhost'
+```
+
 ### 本番環境デモ実行
 ```
 docker compose up --build
