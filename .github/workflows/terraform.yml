@@ -1,0 +1,42 @@
+name: "Terraform Lint and Security Scan"
+
+on:
+  push:
+    branches: [ "main", "feat/*" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  terraform-checks:
+    name: "Terraform Checks"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0
+
+      - name: Terraform Format
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: TFLint
+        uses: terraform-linters/setup-tflint@v3
+        with:
+          tflint_version: v0.48.0
+      - run: tflint --init
+      - run: tflint
+
+      - name: TFSec
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          soft_fail: true # 警告があっても一旦CIを通す設定。厳しくしたければfalseに。

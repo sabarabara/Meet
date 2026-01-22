@@ -1,0 +1,5 @@
+rules:
+  - id: aws-ec2-no-public-egress-sgr
+    skip_check: true
+  - id: aws-elb-alb-not-public
+    skip_check: true
