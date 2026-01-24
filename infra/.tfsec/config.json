@@ -1,0 +1,12 @@
+{
+  "exclude": {
+    "aws-ec2-no-public-egress-sgr": {
+      "because": "External APIs (npm, pip, maven) require public HTTPS egress",
+      "expiration": "2026-12-31"
+    },
+    "aws-elb-alb-not-public": {
+      "because": "Public ALB is required to serve frontend traffic",
+      "expiration": "2026-12-31"
+    }
+  }
+}

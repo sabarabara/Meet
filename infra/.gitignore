@@ -1,0 +1,13 @@
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# .tfvars files
+*.tfvars
+*.tfvars.json
+
+# ただし、lockファイルだけは除外しない（!で許可する）
+!.terraform.lock.hcl

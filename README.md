@@ -18,6 +18,21 @@
 **データベースアーキテクチャ**
 ![DB構造](./docs/img/database.png)
 
+### terraform 
+**コード整形手順**
+下記のコマンドを `environments/` でgit add前に実行する
+```
+terraform fmt -recursive ..
+terraform validate
+tflint
+tfsec .
+```
+**環境作成手順**
+```
+terraform plan
+terraform apply
+```
+
 ### バックエンド コード整形手順
 下記のコマンドをgit add前に実行する
 ```
