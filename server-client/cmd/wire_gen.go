@@ -7,53 +7,103 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"server-client/internal/application/usecase/query"
+	"server-client/internal/domain/repository/command"
 	query2 "server-client/internal/domain/repository/query"
+	auth2 "server-client/internal/infrastructure/auth"
+	strategy "server-client/internal/infrastructure/auth/oidc_client"
+	strategy2 "server-client/internal/infrastructure/auth/provider_strategy"
+	"server-client/internal/infrastructure/auth/provider_strategy/provider"
+	authrepoimpl2 "server-client/internal/infrastructure/database/command/auth_repo_impl"
+	userrepoimpl2 "server-client/internal/infrastructure/database/command/user_repo_impl"
+	authrepoimpl "server-client/internal/infrastructure/database/query/auth_repo_impl"
 	messagerepoimpl "server-client/internal/infrastructure/database/query/message_repo_impl"
 	recruitrepoimpl "server-client/internal/infrastructure/database/query/recruit_repo_impl"
 	roomrepoimpl "server-client/internal/infrastructure/database/query/room_repo_impl"
 	userrepoimpl "server-client/internal/infrastructure/database/query/user_repo_impl"
 	"server-client/internal/presenter/interface/gql/resolver"
+	"server-client/pkg/auth"
+	"server-client/pkg/db"
+
+	"gorm.io/gorm"
 )
 
 // Injectors from wire.go:
 
-func InitializeApp(db *sql.DB) *WireSet {
-	messageRepoImpl := messagerepoimpl.NewMessageRepoImpl(db)
+func InitializeApp(sqlDB *sql.DB, gormDB *gorm.DB, redisClient *db.RedisClient) (*WireSet, error) {
+	contextContext := context.Background()
+	messageRepoImpl := messagerepoimpl.NewMessageRepoImpl(sqlDB)
 	messageUsecase := query.NewMessageUsecase(messageRepoImpl)
-	roomRepoImpl := roomrepoimpl.NewRoomRepoImpl(db)
+	roomRepoImpl := roomrepoimpl.NewRoomRepoImpl(sqlDB)
 	roomUsecase := query.NewRoomUsecase(roomRepoImpl)
-	userRepoImpl := userrepoimpl.NewUserRepoImpl(db)
+	userRepoImpl := userrepoimpl.NewUserRepoImpl(sqlDB)
 	userUsecase := query.NewUserUsecase(userRepoImpl)
-	recruitRepoImpl := recruitrepoimpl.NewRecruitRepoImpl(db)
+	recruitRepoImpl := recruitrepoimpl.NewRecruitRepoImpl(sqlDB)
 	recruitUsecase := query.NewRecruitUsecase(recruitRepoImpl)
 	resolverResolver := resolver.NewResolver(messageUsecase, roomUsecase, userUsecase, recruitUsecase)
-	wireSet := &WireSet{
-		Resolver:       resolverResolver,
-		MessageUsecase: messageUsecase,
-		RoomUsecase:    roomUsecase,
-		UserUsecase:    userUsecase,
-		RecruitUsecase: recruitUsecase,
-		MessageRepo:    messageRepoImpl,
-		RoomRepo:       roomRepoImpl,
-		UserRepo:       userRepoImpl,
-		RecruitRepo:    recruitRepoImpl,
+	authRepoImpl := authrepoimpl.NewAuthRepoImpl(sqlDB)
+	authrepoimplAuthRepoImpl := authrepoimpl2.NewAuthRepoImpl(gormDB)
+	userrepoimplUserRepoImpl := userrepoimpl2.NewUserRepoImpl(gormDB)
+	authConfigs := auth.LoadAuthConfigs()
+	oidcConfig := &authConfigs.Google
+	oidcService, err := strategy.NewOIDCService(contextContext, oidcConfig)
+	if err != nil {
+		return nil, err
 	}
-	return wireSet
+	sessionManager := auth2.NewSessionManager(redisClient)
+	providerRegistry := strategy2.NewProviderRegistry(oidcService)
+	loginHandler := auth2.NewLoginHandler(oidcService, sessionManager, authRepoImpl, authrepoimplAuthRepoImpl, userrepoimplUserRepoImpl, providerRegistry)
+	googleStrategy := provider.NewGoogleStrategy(oidcService)
+	wireSet := &WireSet{
+		Context:          contextContext,
+		Resolver:         resolverResolver,
+		MessageUsecase:   messageUsecase,
+		RoomUsecase:      roomUsecase,
+		UserUsecase:      userUsecase,
+		RecruitUsecase:   recruitUsecase,
+		MessageQueryRepo: messageRepoImpl,
+		RoomQueryRepo:    roomRepoImpl,
+		UserQueryRepo:    userRepoImpl,
+		RecruitQueryRepo: recruitRepoImpl,
+		AuthQueryRepo:    authRepoImpl,
+		AuthCommandRepo:  authrepoimplAuthRepoImpl,
+		UserCommandRepo:  userrepoimplUserRepoImpl,
+		LoginHandler:     loginHandler,
+		SessionManager:   sessionManager,
+		RedisClient:      redisClient,
+		ProviderRegistry: providerRegistry,
+		OIDCService:      oidcService,
+		GoogleProvider:   googleStrategy,
+	}
+	return wireSet, nil
 }
 
 // wire.go:
 
 type WireSet struct {
+	context.Context
+
 	Resolver       *resolver.Resolver
 	MessageUsecase *query.MessageUsecase
 	RoomUsecase    *query.RoomUsecase
 	UserUsecase    *query.UserUsecase
 	RecruitUsecase *query.RecruitUsecase
 
-	MessageRepo query2.MessageRepo
-	RoomRepo    query2.RoomRepo
-	UserRepo    query2.UserRepo
-	RecruitRepo query2.RecruitRepo
+	MessageQueryRepo query2.MessageRepo
+	RoomQueryRepo    query2.RoomRepo
+	UserQueryRepo    query2.UserRepo
+	RecruitQueryRepo query2.RecruitRepo
+	AuthQueryRepo    query2.AuthRepo
+
+	AuthCommandRepo command.AuthRepo
+	UserCommandRepo command.UserRepo
+
+	LoginHandler     *auth2.LoginHandler
+	SessionManager   *auth2.SessionManager
+	RedisClient      *db.RedisClient
+	ProviderRegistry *strategy2.ProviderRegistry
+	OIDCService      *strategy.OIDCService
+	GoogleProvider   *provider.GoogleStrategy
 }
