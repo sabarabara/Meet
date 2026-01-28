@@ -9,16 +9,16 @@ services:
       - "--providers.docker.network=meet-network"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.websecure.address=:443"
-      - "--providers.file.filename=/etc/traefik/traefik.yaml"
+      - "--providers.file.filename=/etc/proxy/traefik.yaml"
     ports:
       - "443:443"
     networks:
       - meet-network
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./traefik/traefik.yaml:/etc/traefik/traefik.yaml:ro"
-      - "./traefik/cert.pem:/etc/traefik/certs/cert.pem:ro"
-      - "./traefik/key.pem:/etc/traefik/certs/key.pem:ro"
+      - "./proxy/traefik.yaml:/etc/proxy/traefik.yaml:ro"
+      - "./proxy/cert.pem:/etc/proxy/certs/cert.pem:ro"
+      - "./proxy/key.pem:/etc/proxy/certs/key.pem:ro"
   
   front:
     build: ./app
@@ -44,6 +44,14 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
+
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URL: ${GOOGLE_REDIRECT_URL}
+      
     networks:
       - meet-network
     ports:
@@ -126,7 +134,8 @@ services:
         psql -h db -U ${DB_USER} -d ${DB_NAME} -f /seed/02_recruit_seed.sql &&
         psql -h db -U ${DB_USER} -d ${DB_NAME} -f /seed/03_rooms_seed.sql &&
         psql -h db -U ${DB_USER} -d ${DB_NAME} -f /seed/04_recruit_location_seed.sql &&
-        psql -h db -U ${DB_USER} -d ${DB_NAME} -f /seed/05_message_seed.sql
+        psql -h db -U ${DB_USER} -d ${DB_NAME} -f /seed/05_message_seed.sql &&
+        psql -h db -U ${DB_USER} -d ${DB_NAME} -f /seed/06_authentication_seed.sql
   db:
     image: postgres:16-alpine
     healthcheck:
@@ -172,6 +181,19 @@ services:
       - -database
       - postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?sslmode=disable
       - up
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - meet-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 volumes:
   db_data:

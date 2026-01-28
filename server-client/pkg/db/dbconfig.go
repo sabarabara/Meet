@@ -7,9 +7,14 @@ import (
 	"os"
 
 	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-var DB *sql.DB
+var (
+	SqlDB  *sql.DB
+	GormDB *gorm.DB
+)
 
 func InitDB() {
 	host := os.Getenv("DB_HOST")
@@ -22,18 +27,21 @@ func InitDB() {
 		log.Fatal("DB 環境変数が設定されていません")
 	}
 
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable application_name=%s",
-		host, port, user, password, dbname, "ess-server")
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
 
 	var err error
-	DB, err = sql.Open("postgres", dsn)
+	SqlDB, err = sql.Open("postgres", dsn)
 	if err != nil {
-		log.Fatal("データベース接続に失敗しました:", err)
+		log.Fatal("sql.DB 接続失敗:", err)
 	}
 
-	if err := DB.Ping(); err != nil {
-		log.Fatal("データベースが起動していません:", err)
+	GormDB, err = gorm.Open(postgres.New(postgres.Config{
+		Conn: SqlDB,
+	}), &gorm.Config{})
+	if err != nil {
+		log.Fatal("GORM 接続失敗:", err)
 	}
 
-	fmt.Println("データベース接続成功")
+	fmt.Println("SQL & GORM 両方の接続に成功しました")
 }

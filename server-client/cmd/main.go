@@ -14,9 +14,14 @@ import (
 func main() {
 
 	db.InitDB()
+	db.InitRedis()
+	rClient := db.InitRedis()
 	r := gin.Default()
 
-	app := InitializeApp(db.DB)
+	app, err := InitializeApp(db.SqlDB, db.GormDB, rClient)
+	if err != nil {
+		log.Fatalf("failed to initialize app: %v", err)
+	}
 
 	srv := handler.NewDefaultServer(gen.NewExecutableSchema(gen.Config{
 		Resolvers: app.Resolver,
@@ -33,6 +38,15 @@ func main() {
 		c.JSON(200, gin.H{
 			"status": "ok",
 		})
+	})
+
+	//OIDC認証用エンドポイント
+	r.GET("/auth/login", func(c *gin.Context) {
+		app.LoginHandler.Login(c.Writer, c.Request)
+	})
+
+	r.GET("/auth/callback", func(c *gin.Context) {
+		app.LoginHandler.Callback(c.Writer, c.Request)
 	})
 
 	if err := r.Run(); err != nil {

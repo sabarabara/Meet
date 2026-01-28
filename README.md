@@ -46,6 +46,13 @@ export DB_USER=postgres
 export DB_PASSWORD=secret
 export DB_NAME=mydb
 export DB_HOST=db
+
+export REDIS_HOST=redis
+export REDIS_PORT=6379
+
+export GOOGLE_CLIENT_ID=**********************************
+export GOOGLE_CLIENT_SECRET=**********************************
+export GOOGLE_REDIRECT_URL=**********************************
 ```
 
 ### TLS設定

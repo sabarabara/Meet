@@ -10,10 +10,10 @@ providers:
   docker:
     exposedByDefault: false
   file:
-    filename: /etc/traefik/traefik.yaml
+    filename: /etc/proxy/traefik.yaml
     watch: true
 
 tls:
   certificates:
-    - certFile: /etc/traefik/certs/cert.pem
-      keyFile: /etc/traefik/certs/key.pem
+    - certFile: /etc/proxy/certs/cert.pem
+      keyFile: /etc/proxy/certs/key.pem
