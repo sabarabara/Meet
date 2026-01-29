@@ -83,6 +83,7 @@ func (h *LoginHandler) Callback(c *gin.Context) {
 	sub := token.Sub
 
 	userid, username, err := h.authQueryRepo.GetAuthenticatedUserInfo(sub, providerName)
+	validuserid := uuid.MustParse(userid)
 	if err != nil {
 		log.Printf("failed to get authenticated user info: %v", err)
 		return
@@ -102,36 +103,36 @@ func (h *LoginHandler) Callback(c *gin.Context) {
 			log.Printf("failed to upsert user: %v", err)
 			return
 		}
-		userid := user_dto.Userid()
-		username := token.Username
-		err = h.authCommandRepo.CreateAuthenticatedTable(*userid, sub, providerName)
+		validuserid := user_dto.Userid()
+		username = token.Username
+		err = h.authCommandRepo.CreateAuthenticatedTable(*validuserid, sub, providerName)
 		if err != nil {
 			log.Printf("failed to create authenticated user: %v", err)
 			return
 		}
-
-		sessionID := uuid.New().String()
-
-		sessData := UserSession{
-			UserID:   *userid,
-			Username: username,
-		}
-
-		if err := h.sessionManager.Create(ctx, sessionID, sessData, 24*time.Hour); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
-			return
-		}
-
-		c.SetCookie("session_id", sessionID, 3600*24, "/", "", true, true)
-		http.SetCookie(c.Writer, &http.Cookie{
-			Name:     "session_id",
-			Value:    sessionID,
-			Path:     "/",
-			HttpOnly: true,
-			Secure:   true,
-			SameSite: http.SameSiteLaxMode,
-		})
-		target := prefix + "/"
-		c.Redirect(http.StatusFound, target)
 	}
+
+	sessionID := uuid.New().String()
+
+	sessData := UserSession{
+		UserID:   validuserid,
+		Username: username,
+	}
+
+	if err := h.sessionManager.Create(ctx, sessionID, sessData, 24*time.Hour); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	c.SetCookie("session_id", sessionID, 3600*24, "/", "", true, true)
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     "session_id",
+		Value:    sessionID,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	})
+	target := prefix + "/"
+	c.Redirect(http.StatusFound, target)
 }
