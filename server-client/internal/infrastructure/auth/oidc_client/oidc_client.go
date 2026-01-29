@@ -41,12 +41,12 @@ func NewOIDCService(ctx context.Context, cfg *auth.OIDCConfig) (*OIDCService, er
 	}, nil
 }
 
-func (s *OIDCService) GetAuthURL(state string) string {
-	return s.config.AuthCodeURL(state)
+func (s *OIDCService) GetAuthURL(state string, redirectURI string) string {
+	return s.config.AuthCodeURL(state, oauth2.AccessTypeOffline, oauth2.SetAuthURLParam("redirect_uri", redirectURI))
 }
 
-func (s *OIDCService) ExchangeAndVerify(ctx context.Context, code string) (*oidc.IDToken, error) {
-	oauth2Token, err := s.config.Exchange(ctx, code)
+func (s *OIDCService) ExchangeAndVerify(ctx context.Context, code string, redirectURI string) (*oidc.IDToken, error) {
+	oauth2Token, err := s.config.Exchange(ctx, code, oauth2.SetAuthURLParam("redirect_uri", redirectURI))
 	if err != nil {
 		return nil, fmt.Errorf("failed to exchange token: %w", err)
 	}

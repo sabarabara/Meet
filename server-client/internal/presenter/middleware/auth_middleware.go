@@ -1,9 +1,10 @@
 package middleware
 
 import (
-	"context"
 	"net/http"
 	"server-client/internal/infrastructure/auth"
+
+	"github.com/gin-gonic/gin"
 )
 
 type AuthMiddleware struct {
@@ -14,22 +15,21 @@ type ctxKey string
 
 const UserKey ctxKey = "user"
 
-func (m *AuthMiddleware) Authenticate(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		cookie, err := r.Cookie("session_id")
+func (m *AuthMiddleware) Authenticate() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		cookie, err := c.Cookie("session_id")
 		if err != nil {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			return
 		}
 
-		userSession, err := m.sessionManager.Get(r.Context(), cookie.Value)
+		userSession, err := m.sessionManager.Get(c.Request.Context(), cookie)
 		if err != nil {
-			http.Error(w, "Unauthorized: Session expired", http.StatusUnauthorized)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Session expired"})
 			return
 		}
+		c.Set("user", userSession)
 
-		ctx := context.WithValue(r.Context(), UserKey, userSession)
-
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+		c.Next()
+	}
 }

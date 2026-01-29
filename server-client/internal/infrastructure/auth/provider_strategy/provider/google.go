@@ -19,12 +19,12 @@ func (s *GoogleStrategy) Matches(iss string) bool {
 	return iss == "https://accounts.google.com" || iss == "accounts.google.com"
 }
 
-func (s *GoogleStrategy) GetAuthURL(state string) string {
-	return s.OIDCService.GetAuthURL(state)
+func (s *GoogleStrategy) GetAuthURL(state string, redirectURI string) string {
+	return s.OIDCService.GetAuthURL(state, redirectURI)
 }
 
-func (s *GoogleStrategy) ExchangeAndVerify(ctx context.Context, code string) (*auth.AuthUser, error) {
-	idToken, err := s.OIDCService.ExchangeAndVerify(ctx, code)
+func (s *GoogleStrategy) ExchangeAndVerify(ctx context.Context, code string, redirectURI string) (*auth.AuthUser, error) {
+	idToken, err := s.OIDCService.ExchangeAndVerify(ctx, code, redirectURI)
 	if err != nil {
 		return nil, err
 	}

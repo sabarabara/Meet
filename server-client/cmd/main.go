@@ -5,6 +5,7 @@ import (
 	"server-client/pkg/db"
 
 	gen "server-client/internal/presenter/dto/gql/graph/generated"
+	"server-client/internal/presenter/middleware"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -17,6 +18,8 @@ func main() {
 	db.InitRedis()
 	rClient := db.InitRedis()
 	r := gin.Default()
+
+	r.Use(middleware.ProxyHeaderMiddleware())
 
 	app, err := InitializeApp(db.SqlDB, db.GormDB, rClient)
 	if err != nil {
@@ -42,11 +45,11 @@ func main() {
 
 	//OIDC認証用エンドポイント
 	r.GET("/auth/login", func(c *gin.Context) {
-		app.LoginHandler.Login(c.Writer, c.Request)
+		app.LoginHandler.Login(c)
 	})
 
 	r.GET("/auth/callback", func(c *gin.Context) {
-		app.LoginHandler.Callback(c.Writer, c.Request)
+		app.LoginHandler.Callback(c)
 	})
 
 	if err := r.Run(); err != nil {
