@@ -76,14 +76,13 @@ func (h *LoginHandler) Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//ここはのちに修正する必要あり
 	if userid == "" || username == "" {
 		dto := dto.NewUserDTO(
-			&uuid.Nil,
+			nil,
+			token.Username,
 			"",
-			"",
-			"",
-			"",
+			"最近始めたばかりのユーザーです。",
+			"よろしくね！",
 			0.0,
 		)
 		user_dto, err := h.userRepo.UpsertUser(dto)
