@@ -35,9 +35,9 @@ func (r *ProviderRegistry) Get(name string) (strategy.AuthProviderStrategy, erro
 	return nil, errors.New("provider not found")
 }
 
-func (r *ProviderRegistry) ExchangeAndVerify(ctx context.Context, code string) (*strategy.AuthUser, error) {
+func (r *ProviderRegistry) ExchangeAndVerify(ctx context.Context, code string, redirectURI string) (*strategy.AuthUser, error) {
 	for _, s := range r.strategies {
-		user, err := s.ExchangeAndVerify(ctx, code)
+		user, err := s.ExchangeAndVerify(ctx, code, redirectURI)
 		if err == nil {
 			return user, nil
 		}
@@ -45,11 +45,11 @@ func (r *ProviderRegistry) ExchangeAndVerify(ctx context.Context, code string) (
 	return nil, errors.New("failed to exchange and verify token with all providers")
 }
 
-func (r *ProviderRegistry) GetAuthURL(name string, state string) (string, error) {
+func (r *ProviderRegistry) GetAuthURL(name string, state string, redirectURI string) (string, error) {
 	for _, s := range r.strategies {
 		if s.GetName() == name {
 			fmt.Println(name)
-			return s.GetAuthURL(state), nil
+			return s.GetAuthURL(state, redirectURI), nil
 		}
 	}
 	return "", errors.New("provider not found")

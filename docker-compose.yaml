@@ -63,6 +63,7 @@ services:
       - "traefik.http.routers.server-client.tls=true"
       - "traefik.http.services.server-client.loadbalancer.server.port=8080"
       - "traefik.http.middlewares.app-strip.stripprefix.prefixes=/app"
+      - "traefik.http.middlewares.app-strip.stripprefix.forceSlash=false"
       - "traefik.http.routers.server-client.middlewares=app-strip"
     healthcheck:
       test:

@@ -12,6 +12,6 @@ type AuthProviderStrategy interface {
 	GetName() string
 	GetIssuer() string
 	Matches(iss string) bool
-	GetAuthURL(state string) string
-	ExchangeAndVerify(ctx context.Context, code string) (*AuthUser, error)
+	GetAuthURL(state string, redirectURI string) string
+	ExchangeAndVerify(ctx context.Context, code string, redirectURI string) (*AuthUser, error)
 }
