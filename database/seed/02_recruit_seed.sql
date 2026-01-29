@@ -8,7 +8,7 @@ INSERT INTO recruit (
   'Tokyo',
   'https://example.com/image.png',
   2, 1, 1, 0,
-  'seed recruit',
+  'test comment',
   '2026-01-02'
 )
 ON CONFLICT (recruitid) DO NOTHING;
