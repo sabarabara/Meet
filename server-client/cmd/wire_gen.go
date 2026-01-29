@@ -12,7 +12,7 @@ import (
 	"server-client/internal/application/usecase/query"
 	"server-client/internal/domain/repository/command"
 	query2 "server-client/internal/domain/repository/query"
-	auth2 "server-client/internal/infrastructure/auth"
+	"server-client/internal/infrastructure/auth"
 	strategy "server-client/internal/infrastructure/auth/oidc_client"
 	strategy2 "server-client/internal/infrastructure/auth/provider_strategy"
 	"server-client/internal/infrastructure/auth/provider_strategy/provider"
@@ -24,7 +24,8 @@ import (
 	roomrepoimpl "server-client/internal/infrastructure/database/query/room_repo_impl"
 	userrepoimpl "server-client/internal/infrastructure/database/query/user_repo_impl"
 	"server-client/internal/presenter/interface/gql/resolver"
-	"server-client/pkg/auth"
+	"server-client/internal/presenter/middleware"
+	auth2 "server-client/pkg/auth"
 	"server-client/pkg/db"
 
 	"gorm.io/gorm"
@@ -43,22 +44,24 @@ func InitializeApp(sqlDB *sql.DB, gormDB *gorm.DB, redisClient *db.RedisClient) 
 	recruitRepoImpl := recruitrepoimpl.NewRecruitRepoImpl(sqlDB)
 	recruitUsecase := query.NewRecruitUsecase(recruitRepoImpl)
 	resolverResolver := resolver.NewResolver(messageUsecase, roomUsecase, userUsecase, recruitUsecase)
+	sessionManager := auth.NewSessionManager(redisClient)
+	authMiddleware := middleware.NewAuthMiddleware(sessionManager)
 	authRepoImpl := authrepoimpl.NewAuthRepoImpl(sqlDB)
 	authrepoimplAuthRepoImpl := authrepoimpl2.NewAuthRepoImpl(gormDB)
 	userrepoimplUserRepoImpl := userrepoimpl2.NewUserRepoImpl(gormDB)
-	authConfigs := auth.LoadAuthConfigs()
+	authConfigs := auth2.LoadAuthConfigs()
 	oidcConfig := &authConfigs.Google
 	oidcService, err := strategy.NewOIDCService(contextContext, oidcConfig)
 	if err != nil {
 		return nil, err
 	}
-	sessionManager := auth2.NewSessionManager(redisClient)
 	providerRegistry := strategy2.NewProviderRegistry(oidcService)
-	loginHandler := auth2.NewLoginHandler(oidcService, sessionManager, authRepoImpl, authrepoimplAuthRepoImpl, userrepoimplUserRepoImpl, providerRegistry)
+	loginHandler := auth.NewLoginHandler(oidcService, sessionManager, authRepoImpl, authrepoimplAuthRepoImpl, userrepoimplUserRepoImpl, providerRegistry)
 	googleStrategy := provider.NewGoogleStrategy(oidcService)
 	wireSet := &WireSet{
 		Context:          contextContext,
 		Resolver:         resolverResolver,
+		AuthMiddleware:   authMiddleware,
 		MessageUsecase:   messageUsecase,
 		RoomUsecase:      roomUsecase,
 		UserUsecase:      userUsecase,
@@ -86,6 +89,8 @@ type WireSet struct {
 	context.Context
 
 	Resolver       *resolver.Resolver
+	AuthMiddleware *middleware.AuthMiddleware
+
 	MessageUsecase *query.MessageUsecase
 	RoomUsecase    *query.RoomUsecase
 	UserUsecase    *query.UserUsecase
@@ -100,8 +105,8 @@ type WireSet struct {
 	AuthCommandRepo command.AuthRepo
 	UserCommandRepo command.UserRepo
 
-	LoginHandler     *auth2.LoginHandler
-	SessionManager   *auth2.SessionManager
+	LoginHandler     *auth.LoginHandler
+	SessionManager   *auth.SessionManager
 	RedisClient      *db.RedisClient
 	ProviderRegistry *strategy2.ProviderRegistry
 	OIDCService      *strategy.OIDCService

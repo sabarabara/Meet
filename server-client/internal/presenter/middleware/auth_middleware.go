@@ -11,15 +11,23 @@ type AuthMiddleware struct {
 	sessionManager *auth.SessionManager
 }
 
+func NewAuthMiddleware(sessionManager *auth.SessionManager) *AuthMiddleware {
+	return &AuthMiddleware{
+		sessionManager: sessionManager,
+	}
+}
+
 type ctxKey string
 
 const UserKey ctxKey = "user"
 
-func (m *AuthMiddleware) Authenticate() gin.HandlerFunc {
+func (m *AuthMiddleware) AuthenticateMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		cookie, err := c.Cookie("session_id")
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			prefix := c.GetString("ProxyPrefix")
+			c.Redirect(http.StatusTemporaryRedirect, prefix+"/auth/login?provider=google")
+			c.Abort()
 			return
 		}
 

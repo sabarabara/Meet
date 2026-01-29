@@ -18,6 +18,7 @@ import (
 	room_repo_impl "server-client/internal/infrastructure/database/query/room_repo_impl"
 	query_user_repo_impl "server-client/internal/infrastructure/database/query/user_repo_impl"
 	gql "server-client/internal/presenter/interface/gql/resolver"
+	"server-client/internal/presenter/middleware"
 	pkg_auth "server-client/pkg/auth"
 	pkg_redis "server-client/pkg/db"
 
@@ -28,6 +29,8 @@ import (
 type WireSet_Test struct {
 	context.Context
 	Resolver       *gql.Resolver
+	AuthMiddleware *middleware.AuthMiddleware
+
 	MessageUsecase *uc_query.MessageUsecase
 	RoomUsecase    *uc_query.RoomUsecase
 	UserUsecase    *uc_query.UserUsecase
@@ -58,6 +61,7 @@ func InitializeApp_Test(sqlDB *sql.DB, gormDB *gorm.DB, redisClient *pkg_redis.R
 
 		//interface層
 		gql.NewResolver,
+		middleware.NewAuthMiddleware,
 
 		//application層
 		uc_query.NewMessageUsecase,
