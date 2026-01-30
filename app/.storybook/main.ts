@@ -24,6 +24,15 @@ const config: StorybookConfig = {
         '@': path.resolve(__dirname, '../src'),
       }
     }
+    config.css = {
+      ...config.css,
+      preprocessorOptions: {
+        ...config.css?.preprocessorOptions,
+        scss: {
+          additionalData: `@use "@/styles/_variables.scss" as *;`,
+        },
+      },
+    }
     return config
   },
 }
