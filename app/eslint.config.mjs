@@ -1,18 +1,56 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import js from '@eslint/js'
+import ts from 'typescript-eslint'
+import prettier from 'eslint-config-prettier'
+import importPlugin from 'eslint-plugin-import'
+import storybookPlugin from 'eslint-plugin-storybook'
 
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
-]);
-
-export default eslintConfig;
+export default [
+  {
+    ignores: ['.next/**', 'node_modules/**', 'storybook-static/**', 'dist/**'],
+  },
+  js.configs.recommended,
+  ...ts.configs.recommended,
+  {
+    files: ['**/*.{js,jsx,ts,tsx}'],
+    plugins: {
+      import: importPlugin,
+      '@typescript-eslint': ts.plugin,
+      storybook: storybookPlugin,
+    },
+    languageOptions: {
+      parser: ts.parser,
+    },
+    rules: {
+      'import/order': [
+        'error',
+        {
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            'parent',
+            'sibling',
+            'index',
+          ],
+          pathGroups: [
+            { pattern: '@/**', group: 'internal', position: 'before' },
+          ],
+          alphabetize: { order: 'asc', caseInsensitive: true },
+          'newlines-between': 'always',
+        },
+      ],
+    },
+  },
+  {
+    files: ['**/*.stories.@(ts|tsx|js|jsx|mjs|cjs)'],
+    plugins: {
+      storybook: storybookPlugin,
+    },
+    rules: {
+      ...storybookPlugin.configs.recommended.rules,
+      'storybook/hierarchy-separator': 'error',
+      'storybook/default-exports': 'off',
+    },
+  },
+  prettier,
+]
