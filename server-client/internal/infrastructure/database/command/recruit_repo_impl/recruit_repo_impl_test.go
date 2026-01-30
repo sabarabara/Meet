@@ -53,7 +53,10 @@ func TestInsertRecruit_Postgres(t *testing.T) {
 	repo := NewRecruitRepoImpl(tx)
 
 	userID := uuid.MustParse("fcf49967-0058-4051-a704-22bd99078606")
-	now := time.Now().UTC().Truncate(time.Microsecond)
+	now, err := time.Parse("2006-01-02", "2026-01-02")
+	if err != nil {
+		t.Fatalf("failed to parse time: %v", err)
+	}
 
 	dto := dto.NewRecruitDTO(
 		nil,
@@ -103,7 +106,7 @@ func TestInsertRecruit_Postgres(t *testing.T) {
 	if entity.Comment != "test comment" {
 		t.Errorf("expected Comment %q, got %q", "test comment", entity.Comment)
 	}
-	if !entity.Date.Equal(now.UTC()) {
-		t.Errorf("expected Date %v, got %v", now.UTC(), entity.Date)
+	if entity.Date != now {
+		t.Errorf("expected Date %v, got %v", now, entity.Date)
 	}
 }
