@@ -1,0 +1,42 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 $big-size;
+  height: 64px;
+  background-color: $color-primary;
+  border-bottom: 1px solid $line-color;
+}
+
+.logo {
+  margin-left: 1.5rem;
+  height: 64px;
+  width: auto;
+}
+.navlist {
+  display: flex;
+  gap: $largest-size;
+  list-style: none;
+  margin-left: 45rem;
+
+  a {
+    color: $fontcolor-primary;
+    text-decoration: none;
+    font-size: $base-size;
+  }
+}
+
+.authButton {
+  background-color: $accent-color;
+  color: $fontcolor-primary;
+  padding: 5px $large-size;
+  border-radius: 1rem;
+  font-weight: $weight-medium;
+  font-size: $base-size;
+  margin-right: 2.5rem;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
