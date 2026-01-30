@@ -18,6 +18,13 @@
 **データベースアーキテクチャ**
 ![DB構造](./docs/img/database.png)
 
+### フロントエンド コード整形手順
+```
+npx prettier --write .
+npm run lint:fix
+npm run build
+```
+
 ### terraform 
 **コード整形手順**
 下記のコマンドを `environments/` でgit add前に実行する
